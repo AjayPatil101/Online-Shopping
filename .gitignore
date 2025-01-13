@@ -1,0 +1,57 @@
+# Node.js (React) Specific
+node_modules/
+build/
+.env
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Spring Boot Specific
+target/
+*.jar
+*.war
+*.ear
+*.iml
+hs_err_pid*
+.idea/
+*.class
+*.project
+*.classpath
+.settings/
+.factorypath
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Eclipse
+*.metadata/
+*.classpath
+*.project
+.settings/
+bin/
+
+# OS Specific
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.swo
+
+# Maven
+.mvn/
+target/
+
+
+.metadata/
