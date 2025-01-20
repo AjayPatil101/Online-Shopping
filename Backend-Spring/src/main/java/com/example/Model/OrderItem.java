@@ -23,15 +23,9 @@ public class OrderItem {
 	private int quantity;
 	private Integer price;
 	private Integer discountedPrice;
-	private Long userrId;
-	private LocalDateTime deliveryDate;
-	public OrderItem() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
+	private Long userId;
 	public OrderItem(Long id, Order order, Product product, String size, int quantity, Integer price,
-			Integer discountedPrice, Long userrId, LocalDateTime deliveryDate) {
+			Integer discountedPrice, Long userId) {
 		super();
 		this.id = id;
 		this.order = order;
@@ -40,10 +34,12 @@ public class OrderItem {
 		this.quantity = quantity;
 		this.price = price;
 		this.discountedPrice = discountedPrice;
-		this.userrId = userrId;
-		this.deliveryDate = deliveryDate;
+		this.userId = userId;
 	}
-
+	public OrderItem() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public Long getId() {
 		return id;
 	}
@@ -86,17 +82,11 @@ public class OrderItem {
 	public void setDiscountedPrice(Integer discountedPrice) {
 		this.discountedPrice = discountedPrice;
 	}
-	public Long getUserrId() {
-		return userrId;
+	public Long getUserId() {
+		return userId;
 	}
-	public void setUserrId(Long userrId) {
-		this.userrId = userrId;
-	}
-	public LocalDateTime getDeliveryDate() {
-		return deliveryDate;
-	}
-	public void setDeliveryDate(LocalDateTime deliveryDate) {
-		this.deliveryDate = deliveryDate;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	
 }

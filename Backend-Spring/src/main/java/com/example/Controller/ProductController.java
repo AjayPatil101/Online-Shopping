@@ -20,33 +20,29 @@ import com.example.Service.ProductService;
 @RequestMapping("/api")
 public class ProductController {
 	public ProductService productService;
-	
+
 	public ProductController(ProductService productService) {
 		super();
 		this.productService = productService;
 	}
 
 	@GetMapping("/products")
-	public ResponseEntity<Page<Product>> findProductByCategoryHandler(
-	        @RequestParam String category,
-	        @RequestParam List<String> color,
-	        @RequestParam List<Size> size,
-	        @RequestParam Integer minPrice,
-	        @RequestParam Integer maxPrice,
-	        @RequestParam Integer minDiscount,
-	        @RequestParam String sort,
-	        @RequestParam String stock,
-	        @RequestParam Integer pageNumber,
-	        @RequestParam Integer pageSize) {
-
-	    Page<Product> res = productService.getAllProduct(category, color, size, minPrice, maxPrice, minDiscount, sort, stock, pageNumber, pageSize);
-	    System.out.println("complete products");
-	    return new ResponseEntity<>(res, HttpStatus.ACCEPTED);
+	public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(required = false) String category,
+			@RequestParam(required = false) List<String> color, @RequestParam(required = false,defaultValue = "0") Integer minPrice,
+			@RequestParam(required = false) Integer maxPrice, @RequestParam(required = false) Integer minDiscount,
+			@RequestParam(required = false) String sort, @RequestParam(required = false) String stock,
+			@RequestParam(defaultValue = "0") Integer pageNumber, @RequestParam(defaultValue = "10") Integer pageSize,
+			@RequestParam(required = false) List<String> size) {
+		Page<Product> products = productService.getAllProduct(category, color, minPrice, maxPrice, minDiscount, sort,
+				stock, pageNumber, pageSize, size);
+		return ResponseEntity.ok(products);
 	}
+
 	@GetMapping("/products/id/{productId}")
-	public ResponseEntity<Product> findProductByIdHandler(@PathVariable("productId") Long productId) throws ProdectException {
-	    Product product = productService.findProductById(productId);
-	    return new ResponseEntity<>(product, HttpStatus.OK);
+	public ResponseEntity<Product> findProductByIdHandler(@PathVariable("productId") Long productId)
+			throws ProdectException {
+		Product product = productService.findProductById(productId);
+		return new ResponseEntity<>(product, HttpStatus.OK);
 	}
 
 }

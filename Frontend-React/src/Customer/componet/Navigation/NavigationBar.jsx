@@ -9,8 +9,11 @@ import {
 
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
-import {NavigationData} from "./NavigationData.js";
-import { useNavigate } from "react-router-dom";
+import { NavigationData } from "./NavigationData.js";
+import { useLocation, useNavigate } from "react-router-dom";
+import AuthModal from "../../Auth/AuthModal.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser, logout } from "../../../State/Auth/Action.js";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -18,14 +21,14 @@ function classNames(...classes) {
 
 export default function NavigationBar() {
   const [open, setOpen] = useState(false);
-const navigation = useNavigate(true);
-
+  const navigation = useNavigate(true);
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const jwt = localStorage.getItem("jwt");
-
-
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { auth } = useSelector((store) => store);
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,8 +45,25 @@ const navigation = useNavigate(true);
   };
 
   const handleCategoryClick = (category, section, item, close) => {
-    navigation(`/${category.id}/${section.id}/${item.id}`); 
+    navigation(`/${category.id}/${section.id}/${item.id}`);
     close();
+  };
+  useEffect(() => {
+    if (jwt) dispatch(getUser(jwt));
+  }, [jwt, auth.jwt]);
+
+  useEffect(() => {
+    if (auth.user) {
+      handleClose();
+    }
+    if (location.pathname === "/login" || location.pathname === "/signin") {
+      navigation(-1);
+    }
+  }, [auth.user]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseUserMenu();
   };
 
   return (
@@ -232,12 +252,12 @@ const navigation = useNavigate(true);
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                  <span className="sr-only">Your Company</span>
-                  <img
-                    src="https://res.cloudinary.com/ddkso1wxi/image/upload/v1675919455/Logo/Copy_of_Zosh_Academy_nblljp.png"
-                    alt="Shopwithzosh"
-                    className="h-8 w-8 mr-2"
-                  />
+                <span className="sr-only">Your Company</span>
+                <img
+                  src="https://res.cloudinary.com/ddkso1wxi/image/upload/v1675919455/Logo/Copy_of_Zosh_Academy_nblljp.png"
+                  alt="Shopwithzosh"
+                  className="h-8 w-8 mr-2"
+                />
               </div>
 
               {/* Flyout menus */}
@@ -374,7 +394,7 @@ const navigation = useNavigate(true);
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {true ? (
+                  {auth.user?.firstName ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -389,8 +409,7 @@ const navigation = useNavigate(true);
                           cursor: "pointer",
                         }}
                       >
-                        {/* {auth.user?.firstName[0].toUpperCase()} */}
-                        R
+                        {auth.user?.firstName[0].toUpperCase()}
                       </Avatar>
                       {/* <Button
                         id="basic-button"
@@ -410,13 +429,17 @@ const navigation = useNavigate(true);
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={()=>navigation('/account/order')}>
+                        <MenuItem onClick={handleCloseUserMenu}>
+                       
+                          Profile
+                        </MenuItem>
+                        <MenuItem onClick={() => navigation("/account/order")}>
                           {/* {auth.user?.role === "ROLE_ADMIN"
                             ? "Admin Dashboard"
                             : "My Orders"} */}
-                            My Orders
+                          My Orders
                         </MenuItem>
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                     </div>
                   ) : (
@@ -431,12 +454,12 @@ const navigation = useNavigate(true);
 
                 {/* Search */}
                 <div className="flex items-center lg:ml-6">
-                
-                  <p 
-                  // onClick={()=>navigate("/products/search")}
-                   className="p-2 text-gray-400 hover:text-gray-500">
+                  <p
+                    // onClick={()=>navigate("/products/search")}
+                    className="p-2 text-gray-400 hover:text-gray-500"
+                  >
                     <span className="sr-only">Search</span>
-                    
+
                     <MagnifyingGlassIcon
                       className="h-6 w-6"
                       aria-hidden="true"
@@ -455,7 +478,7 @@ const navigation = useNavigate(true);
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                     2
+                      2
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
                   </Button>
@@ -465,7 +488,7 @@ const navigation = useNavigate(true);
           </div>
         </nav>
       </header>
-      {/* <AuthModal handleClose={handleClose} open={openAuthModal} /> */}
+      <AuthModal handleClose={handleClose} open={openAuthModal} />
     </div>
   );
 }

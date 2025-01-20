@@ -1,5 +1,7 @@
 package com.example.Controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Config.JwtProvider;
 import com.example.Exception.UserException;
+import com.example.Model.Cart;
 import com.example.Model.User;
 import com.example.Repository.UserRepository;
 import com.example.Request.LoginRequest;
 import com.example.Response.AuthResponse;
+import com.example.Service.CartService;
 import com.example.Service.CustomeUserServiceImplementaton;
 
 @RestController
@@ -28,14 +32,17 @@ public class AuthController {
 	private JwtProvider jwtProvider;
 	private PasswordEncoder passwordEncoder;
 	private CustomeUserServiceImplementaton customeUserServiceImplementaton;
+	private CartService cartService;
 
+	
 	public AuthController(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder,
-			CustomeUserServiceImplementaton customeUserServiceImplementaton) {
+			CustomeUserServiceImplementaton customeUserServiceImplementaton, CartService cartService) {
 		super();
 		this.userRepository = userRepository;
 		this.jwtProvider = jwtProvider;
 		this.passwordEncoder = passwordEncoder;
 		this.customeUserServiceImplementaton = customeUserServiceImplementaton;
+		this.cartService = cartService;
 	}
 
 	@PostMapping("/signup")
@@ -56,9 +63,11 @@ public class AuthController {
 		createdUser.setPassword(passwordEncoder.encode(password));
 		createdUser.setFirstName(firstName);
 		createdUser.setLastName(lastName);
+		createdUser.setCreatedAt(LocalDateTime.now());	
 
 		User saveUser = userRepository.save(createdUser);
 
+		Cart cart = cartService.createCart(saveUser); 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(saveUser.getEmail(),
 				saveUser.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -30,6 +30,7 @@ public class CartServiceImplementation implements CartService {
 		Cart cart = new Cart();
 		cart.setUser(user);
 		cartRepository.save(cart);
+		System.out.println(cart);
 		return cart;
 	}
 

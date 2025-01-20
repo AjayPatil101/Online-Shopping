@@ -4,8 +4,12 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
-			<item value="jwtcon"/>
+			<item value="getCartItems()"/>
+			<item value="size"/>
 			<item value="address"/>
+			<item value="ApiResponse"/>
+			<item value="apir"/>
+			<item value="jwtcon"/>
 		</list>
 	</section>
 </section>

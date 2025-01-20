@@ -97,6 +97,14 @@ public class createProductRequest {
 	public void setThirdLevelCategory(String thirdLevelCategory) {
 		this.thirdLevelCategory = thirdLevelCategory;
 	}
+	@Override
+	public String toString() {
+		return "createProductRequest [title=" + title + ", description=" + description + ", price=" + price
+				+ ", discountedPrice=" + discountedPrice + ", discountPersent=" + discountPersent + ", quantity="
+				+ quantity + ", brand=" + brand + ", color=" + color + ", size=" + size + ", imageUrl=" + imageUrl
+				+ ", topLevelCategory=" + topLevelCategory + ", secondLevelCategory=" + secondLevelCategory
+				+ ", thirdLevelCategory=" + thirdLevelCategory + "]";
+	}
 	
 	
 }

@@ -2,6 +2,7 @@ package com.example.Service;
 
 import java.awt.print.Pageable;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -120,10 +121,26 @@ public class ProductServiceImplementation implements ProductService {
 	}
 
 	@Override
-	public Page<Product> getAllProduct(String category, List<String> color, List<Size> size, Integer minPrice,
-			Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
+	public Page<Product> getAllProduct(String category, List<String> color, Integer minPrice,
+			Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize,List<String>size) {
+		
+		if(pageNumber<0)pageNumber=0;
 		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		
 		List<Product> products = productRepository.filterProducts(category, minPrice, maxPrice, minDiscount, sort);
+		if(size!=null)
+			if (!size.isEmpty()) {
+			    System.out.println("Filtering by sizes: " + size);
+			    products = products.stream()
+			        .filter(p -> {
+			            boolean matches = p.getSizes().stream()
+			                .anyMatch(s -> size.stream()
+			                    .anyMatch(c -> c.equalsIgnoreCase(s.getName())));
+			            return matches;
+			        })
+			        .collect(Collectors.toList());
+			}
+		if(color!=null)
 		if (!color.isEmpty()) {
 			products = products.stream().filter(p -> color.stream().anyMatch(c -> c.equalsIgnoreCase(p.getColor())))
 					.collect(Collectors.toList());
@@ -135,11 +152,16 @@ public class ProductServiceImplementation implements ProductService {
 				products = products.stream().filter(p -> p.getQuantity() < 1).collect(Collectors.toList());
 			}
 		}
-		int startIndex = (int) pageable.getOffset();
-		int endIndex = Math.min(startIndex + pageable.getPageSize(), products.size());
-		List<Product>pageContent = products.subList(endIndex, endIndex);
-		Page<Product> filterProduct = new 	PageImpl<>(pageContent,pageable,products.size());
-		return filterProduct;
+		
+		int startIndex = (pageNumber)*pageSize;
+	    int endIndex = Math.min(startIndex + pageable.getPageSize(), products.size());
+	    // Handle cases where the page is empty
+	    if (startIndex >= products.size()) {
+	        return new PageImpl<>(Collections.emptyList(), pageable, products.size());
+	    }
+
+	    List<Product> pageContent = products.subList(startIndex, endIndex); 
+	    return new PageImpl<>(pageContent, pageable, products.size());
 	}
 
 }

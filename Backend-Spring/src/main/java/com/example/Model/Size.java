@@ -28,5 +28,4 @@ public class Size {
 	public String toString() {
 		return "Size [name=" + name + ", quantity=" + quantity + "]";
 	}
-	
 }
